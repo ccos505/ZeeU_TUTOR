@@ -170,7 +170,7 @@ if st.session_state.page == "home":
     <div class="hero">
         <div class="hero-content">
             <h1>ZeeU TUTOR</h1>
-            <p>เตรียมสอบเข้า M1 & M4 แบบมืออาชีพ<br>
+            <p>เตรียมสอบเข้า ม.1 & ม.4 แบบมืออาชีพ<br>
             สร้างความเข้าใจระยะยาว คิดวิเคราะห์เป็นระบบ</p>
         </div>
     </div>
@@ -197,12 +197,12 @@ elif st.session_state.page == "select_exam":
     col1, col2 = st.columns(2)
 
     with col1:
-        if st.button("🎯 ทำข้อสอบ M1"):
+        if st.button("🎯 ทำข้อสอบ ม.1"):
             st.session_state.level = "m1"
             st.session_state.page = "exam"
 
     with col2:
-        if st.button("🚀 ทำข้อสอบ M4"):
+        if st.button("🚀 ทำข้อสอบ ม.4"):
             st.session_state.level = "m4"
             st.session_state.page = "exam"
 
@@ -241,6 +241,7 @@ elif st.session_state.page == "register":
     st.title("สมัครเรียน")
 
     name = st.text_input("ชื่อ-นามสกุล")
+    grade = st.text_input("ระดับชั้น")
     phone = st.text_input("เบอร์โทรศัพท์")
 
     if st.button("ยืนยันสมัคร"):
