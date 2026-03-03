@@ -1,9 +1,13 @@
-import json
+import os
 from PIL import Image
 import streamlit as st
+from utils.image_utils import get_base64
+from utils.question_loader import load_questions
+from styles.main_style import apply_style
+from pages.home import render_home
 
 logo = Image.open("logo.png")
-
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 st.set_page_config(
     page_title="ZeeU TUTOR",
     page_icon=logo,  
@@ -11,133 +15,21 @@ st.set_page_config(
 )
 
 st.set_page_config(page_title="ZeeU TUTOR", layout="wide")
+# Load images
+bg1 = get_base64("assets/hero1.jpg")
+bg2 = get_base64("assets/hero2.jpg")
+bg3 = get_base64("assets/hero3.jpg")
+bg4 = get_base64("assets/hero4.jpg")
 
-# ------------------ LOAD QUESTIONS ------------------
+# Apply style
+st.markdown(apply_style(bg1,bg2,bg3,bg4), unsafe_allow_html=True)
 
-
-# def load_questions(file):
-#     with open(file, "r", encoding="utf-8") as f:
-#         return json.load(f)
-import os
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-def load_questions(filename):
-    file_path = os.path.join(BASE_DIR, filename)
-    with open(file_path, "r", encoding="utf-8") as f:
-        questions = json.load(f)
-    return questions
-
-st.markdown("""
-<style>
-
-/* ===== ANNOUNCEMENT BAR ===== */
-.announce {
-    background: #1e40af;
-    color: white;
-    text-align: center;
-    padding: 8px;
-    font-size: 14px;
-}
-
-/* ===== NAVBAR ===== */
-.navbar {
-    background: white;
-    padding: 18px 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-}
-
-.nav-logo {
-    font-size: 24px;
-    font-weight: 800;
-    color: #1e3a8a;
-}
-
-/* ===== HERO ===== */
-.hero {
-    background-image: url("https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1600");
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    padding: 160px 20px;
-    text-align: center;
-    color: white;
-    border-radius: 0 0 40px 40px;
-}
-
-.hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.55);
-    border-radius: 0 0 40px 40px;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-}
-
-.hero h1 {
-    font-size: 72px;
-    font-weight: 800;
-    margin: 0;
-}
-
-.hero p {
-    font-size: 24px;
-    margin-top: 20px;
-}
-
-/* ===== BUTTON ===== */
-.stButton>button {
-    border-radius: 14px;
-    height: 52px;
-    font-weight: 600;
-    background: linear-gradient(135deg, #2563eb, #1e40af);
-    color: white;
-    border: none;
-    transition: 0.3s ease;
-}
-
-.stButton>button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-}
-
-/* ===== CONTACT CARD ===== */
-.contact-box {
-    margin-top: 60px;
-    padding: 30px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-    font-size: 18px;
-    text-align: center;
-}
-
-/* ===== EXAM CARD ===== */
-.exam-box {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-
-# ------------------ SESSION ------------------
+# Page routing
 if "page" not in st.session_state:
     st.session_state.page = "home"
 
-# ================== HOME ==================
 if st.session_state.page == "home":
+    
 
     # Announcement Bar
     st.markdown("""
@@ -147,7 +39,7 @@ if st.session_state.page == "home":
     """, unsafe_allow_html=True)
 
     # Navbar
-    nav1, nav2, nav3, nav4 = st.columns([3,1,1,1])
+    nav1, nav2, nav3, nav4, nav5, nav6, nav7 = st.columns([3,1,1,1,1,1,1])
 
     with nav1:
         st.markdown("### ZeeU TUTOR")
@@ -164,19 +56,28 @@ if st.session_state.page == "home":
 
     with nav4:
         if st.button("ติดต่อ"):
+            # st.session_state.page = "contact"
             st.session_state.page = "home"
             st.rerun()
 
-    # Hero
-    st.markdown("""
-    <div class="hero">
-        <div class="hero-content">
-            <h1>ZeeU TUTOR</h1>
-            <p>เตรียมสอบเข้า ม.1 & ม.4 แบบมืออาชีพ<br>
-            สร้างความเข้าใจระยะยาว คิดวิเคราะห์เป็นระบบ</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    with nav5:
+        if st.button("คอร์สเรียน"):
+            # st.session_state.page = "courses"
+            st.session_state.page = "home"
+            st.rerun()
+
+    with nav6:
+        if st.button("โปรโมชัน"):
+            # st.session_state.page = "promotion"
+            st.session_state.page = "home"
+            st.rerun()
+
+    with nav7:
+        if st.button("ทดลองเรียนฟรี"):
+            # st.session_state.page = "free_trial"
+            st.session_state.page = "home"
+            st.rerun()
+    render_home()
 
     st.write("")
     st.write("")
@@ -225,11 +126,11 @@ elif st.session_state.page == "exam":
         st.subheader(f"ข้อที่ {q['no']}")
         st.write(q["question"])
 
-        # แสดงรูปถ้ามี
-        if q["image"]:
-            st.image(q["image"], width=300)
-
-        # ถ้ามีตัวเลือก → ใช้ radio
+        if q.get("image"):
+            image_path = os.path.join(BASE_DIR, q["image"])
+            if os.path.exists(image_path):
+                st.image(image_path, width=300)
+                
         if q["choices"]:
             ans = st.radio(
                 "เลือกคำตอบ",
