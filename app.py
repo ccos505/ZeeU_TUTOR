@@ -15,9 +15,18 @@ st.set_page_config(page_title="ZeeU TUTOR", layout="wide")
 # ------------------ LOAD QUESTIONS ------------------
 
 
-def load_questions(file):
-    with open(file, "r", encoding="utf-8") as f:
-        return json.load(f)
+# def load_questions(file):
+#     with open(file, "r", encoding="utf-8") as f:
+#         return json.load(f)
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def load_questions(filename):
+    file_path = os.path.join(BASE_DIR, filename)
+    with open(file_path, "r", encoding="utf-8") as f:
+        questions = json.load(f)
+    return questions
 
 st.markdown("""
 <style>
