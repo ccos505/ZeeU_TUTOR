@@ -114,5 +114,90 @@ def apply_style(bg1, bg2, bg3, bg4):
         margin-bottom: 20px;
     }}
 
+/* Social item */
+.contact-item {{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 300;
+    color: #1e3a8a;
+    transition: 0.3s ease;
+}}
+
+/* Logo size */
+.contact-item img {{
+    width: 34px;
+}}
+
+/* Hover effect */
+.contact-item:hover {{
+    background: #f3f6ff;
+    transform: translateY(-2px);
+}}
+
+.footer {{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(30, 64, 175, 0.95);
+    backdrop-filter: blur(8px);
+    padding: 14px 0;
+    z-index: 999;
+}}
+
+.footer-content {{
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    color: white;
+}}
+
+.footer-title {{
+    font-weight: 600;
+    font-size: 16px;
+    color: white;
+}}
+
+.footer-links {{
+    display: flex;
+    gap: 30px;
+}}
+
+.footer-item {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #ffffff !important;   
+    font-weight: 600;
+    transition: 0.3s ease;
+}}
+
+.footer-item span {{
+    color: #ffffff !important;   
+}}
+
+.footer-item img {{
+    width: 22px;
+    filter: brightness(0) invert(1);
+}}
+
+.footer-item:hover {{
+    transform: translateY(-2px);
+    opacity: 1;   /* remove fade effect */
+}}
+
+/* Prevent content from hiding behind footer */
+.main .block-container {{
+    padding-bottom: 100px;
+}}
     </style>
     """

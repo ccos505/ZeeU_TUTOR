@@ -83,15 +83,42 @@ if st.session_state.page == "home":
     st.write("")
 
     col1, col2 = st.columns(2)
-
     st.markdown("""
-    <div class="contact-box">
-        <b>ติดต่อเรา</b><br><br>
-        📘 Facebook: ZeeuTUTOR <br>
-        💬 Line: openchat ZeeuTUTOR <br>
-        📞 Phone: 065-294-1928
+    <div class="footer">
+
+    <div class="footer-content">
+
+    <div class="footer-title">
+    ZeeU TUTOR | ติดต่อเรา
+    </div>
+
+    <div class="footer-links">
+
+    <a href="https://www.facebook.com/profile.php?id=61586686648790"
+    target="_blank"
+    class="footer-item">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg">
+        <span>ZeeuTUTOR</span>
+    </a>
+
+    <a href="https://line.me/ti/g2/Xz8aX7jDsDKEsJKESX6-cCcWg8vNKrRNnLiy-g?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"
+    target="_blank"
+    class="footer-item">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg">
+        <span>OpenChat</span>
+    </a>
+
+    <a href="tel:0652941928"
+    class="footer-item">
+        📞 <span>065-294-1928</span>
+    </a>
+
+    </div>
+
+    </div>
     </div>
     """, unsafe_allow_html=True)
+
 # ================== SELECT EXAM ==================
 elif st.session_state.page == "select_exam":
 
