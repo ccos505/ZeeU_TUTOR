@@ -1,165 +1,143 @@
 import streamlit as st
-import base64
 
-# -----------------------
+# --------------------------------
 # Page Config
-# -----------------------
+# --------------------------------
 st.set_page_config(
     page_title="ZeeU TUTOR",
-    page_icon="📚",
-    layout="wide"
+    layout="wide",
+    page_icon="📚"
 )
 
-# -----------------------
-# Custom CSS (Minimal Modern)
-# -----------------------
+# --------------------------------
+# Custom CSS (Modern UI)
+# --------------------------------
 st.markdown("""
 <style>
-
-body {
-    background-color: #f8f9fa;
+html, body {
+    margin: 0;
+    padding: 0;
 }
 
-.main {
-    padding: 2rem;
-}
-
-.big-title {
-    font-size: 48px;
-    font-weight: 700;
+.header {
+    background-image: url('https://images.pexels.com/photos/4145195/pexels-photo-4145195.jpeg?auto=compress&cs=tinysrgb&w=1200');
+    background-size: cover;
+    background-position: center;
+    padding: 120px 0;
     text-align: center;
-    margin-bottom: 10px;
+    color: #FFFFFF;
+    backdrop-filter: brightness(0.6);
 }
 
-.subtitle {
-    text-align: center;
-    color: gray;
-    margin-bottom: 40px;
+.header h1 {
+    font-size: 72px;
+    font-weight: bold;
+    margin: 0;
 }
 
-.level-card {
-    padding: 40px;
+.header p {
+    font-size: 22px;
+    margin-top: 10px;
+    opacity: 0.9;
+}
+
+.btn-modern {
+    background-color: #000;
+    color: #fff;
+    padding: 15px 30px;
+    font-weight: 600;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.btn-modern:hover {
+    background-color: #333;
+    color: #fff;
+    transform: translateY(-3px);
+}
+
+.level-cards {
+    padding: 60px 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.card {
+    width: 280px;
+    background: #fff;
+    box-shadow: 0px 10px 25px rgba(0,0,0,0.08);
     border-radius: 20px;
-    background: white;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    padding: 30px;
     text-align: center;
     transition: 0.3s;
 }
 
-.level-card:hover {
+.card:hover {
+    box-shadow: 0px 15px 30px rgba(0,0,0,0.12);
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
 }
 
-.stButton>button {
-    width: 100%;
-    border-radius: 12px;
-    height: 50px;
-    font-weight: 600;
-    background-color: black;
-    color: white;
+.card h3 {
+    font-size: 28px;
+    margin-bottom: 10px;
 }
 
-.stButton>button:hover {
-    background-color: #333333;
-    color: white;
+.card p {
+    color: #555;
+    font-size: 16px;
 }
 
-.exam-box {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
+.footer {
+    text-align: center;
+    margin-top: 80px;
+    padding: 40px 0;
+    color: #888;
+    font-size: 14px;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
-# -----------------------
-# Load Logo
-# -----------------------
-st.image("logo.png", width=120)
+# --------------------------------
+# Hero Section
+# --------------------------------
+st.markdown("""
+<div class="header">
+    <h1>ZeeU TUTOR</h1>
+    <p>เตรียมสอบเข้า M1 & M4 ด้วยแบบฝึกหัดคุณภาพ</p>
+    <a class="btn-modern" href="#levels">เริ่มเลย</a>
+</div>
+""", unsafe_allow_html=True)
 
-st.markdown('<div class="big-title">ZeeU TUTOR</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Math Practice Exam Platform</div>', unsafe_allow_html=True)
+# --------------------------------
+# Cards Section
+# --------------------------------
+st.markdown('<div id="levels" class="level-cards">', unsafe_allow_html=True)
 
-# -----------------------
-# Load Questions
-# -----------------------
-def load_questions(file_name):
-    questions = []
-    with open(file_name, "r", encoding="utf-8") as f:
-        for line in f:
-            parts = line.strip().split("|")
-            if len(parts) == 3:
-                questions.append({
-                    "no": parts[0],
-                    "question": parts[1],
-                    "answer": parts[2]
-                })
-    return questions
+st.markdown("""
+<div class="card">
+    <h3>📘 สอบเข้า M1</h3>
+    <p>แบบฝึกหัดคัดกรองพื้นฐาน เพิ่มความมั่นใจ</p>
+    <a class="btn-modern" href="#m1">ทำข้อสอบ M1</a>
+</div>
+""", unsafe_allow_html=True)
 
-# -----------------------
-# Session State
-# -----------------------
-if "page" not in st.session_state:
-    st.session_state.page = "home"
+st.markdown("""
+<div class="card">
+    <h3>📗 สอบเข้า M4</h3>
+    <p>โจทย์ระดับกลาง-สูง พร้อมเฉลย</p>
+    <a class="btn-modern" href="#m4">ทำข้อสอบ M4</a>
+</div>
+""", unsafe_allow_html=True)
 
-# -----------------------
-# HOME PAGE
-# -----------------------
-if st.session_state.page == "home":
+st.markdown('</div>', unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.markdown('<div class="level-card">', unsafe_allow_html=True)
-        st.markdown("### 🎯 สอบเข้า M1")
-        st.write("แบบฝึกหัดพื้นฐาน ม.1")
-        if st.button("เริ่มทำข้อสอบ M1"):
-            st.session_state.level = "m1"
-            st.session_state.page = "exam"
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col2:
-        st.markdown('<div class="level-card">', unsafe_allow_html=True)
-        st.markdown("### 🚀 สอบเข้า M4")
-        st.write("แบบฝึกหัดสอบเข้า ม.4")
-        if st.button("เริ่มทำข้อสอบ M4"):
-            st.session_state.level = "m4"
-            st.session_state.page = "exam"
-        st.markdown('</div>', unsafe_allow_html=True)
-
-# -----------------------
-# EXAM PAGE
-# -----------------------
-elif st.session_state.page == "exam":
-
-    st.markdown("---")
-    st.markdown(f"## 📝 ข้อสอบระดับ {st.session_state.level.upper()}")
-
-    questions = load_questions(f"{st.session_state.level}.txt")
-    score = 0
-    user_answers = []
-
-    for q in questions:
-        st.markdown('<div class="exam-box">', unsafe_allow_html=True)
-        st.write(f"### ข้อ {q['no']}")
-        st.write(q["question"])
-        ans = st.text_input("คำตอบของคุณ", key=q["no"])
-        user_answers.append((q, ans))
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    if st.button("ส่งคำตอบ"):
-        for q, ans in user_answers:
-            if ans.strip() == q["answer"]:
-                score += 1
-
-        st.success(f"🎉 คะแนนของคุณ: {score} / {len(questions)}")
-
-        if score == len(questions):
-            st.balloons()
-
-    if st.button("⬅ กลับหน้าแรก"):
-        st.session_state.page = "home"
+# --------------------------------
+# Footer
+# --------------------------------
+st.markdown("""
+<div class="footer">
+    © 2026 ZeeU TUTOR — เว็บฝึกสอบออนไลน์
+</div>
+""", unsafe_allow_html=True)
