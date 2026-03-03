@@ -1,3 +1,4 @@
+import json
 from PIL import Image
 import streamlit as st
 
@@ -8,23 +9,15 @@ st.set_page_config(
     page_icon=logo,  
     layout="wide"
 )
-import streamlit as st
 
 st.set_page_config(page_title="ZeeU TUTOR", layout="wide")
 
 # ------------------ LOAD QUESTIONS ------------------
+
+
 def load_questions(file):
-    questions = []
     with open(file, "r", encoding="utf-8") as f:
-        for line in f:
-            parts = line.strip().split("|")
-            if len(parts) == 3:
-                questions.append({
-                    "no": parts[0],
-                    "question": parts[1],
-                    "answer": parts[2]
-                })
-    return questions
+        return json.load(f)
 
 st.markdown("""
 <style>
@@ -214,23 +207,41 @@ elif st.session_state.page == "exam":
 
     st.title(f"ข้อสอบระดับ {st.session_state.level.upper()}")
 
-    questions = load_questions(f"{st.session_state.level}.txt")
+    questions = load_questions(f"questions/{st.session_state.level}.json")
     score = 0
     user_answers = []
 
     for q in questions:
         st.markdown('<div class="exam-box">', unsafe_allow_html=True)
-        st.write(f"### ข้อ {q['no']}")
+        st.subheader(f"ข้อที่ {q['no']}")
         st.write(q["question"])
-        ans = st.text_input("คำตอบ", key=q["no"])
-        user_answers.append((q, ans))
+
+        # แสดงรูปถ้ามี
+        if q["image"]:
+            st.image(q["image"], width=300)
+
+        # ถ้ามีตัวเลือก → ใช้ radio
+        if q["choices"]:
+            ans = st.radio(
+                "เลือกคำตอบ",
+                q["choices"],
+                key=f"q_{q['no']}"
+            )
+        else:
+            ans = st.text_input(
+                "คำตอบ",
+                key=f"q_{q['no']}"
+            )
+        user_answers.append((q, str(ans)))
         st.markdown('</div>', unsafe_allow_html=True)
+    score = 0
 
     if st.button("ส่งคำตอบ"):
         for q, ans in user_answers:
-            if ans.strip() == q["answer"]:
+            if str(ans.strip()) == str(q["answer"]):
                 score += 1
-        st.success(f"คะแนนของคุณ: {score} / {len(questions)}")
+
+        st.success(f"คุณได้ {score} / {len(questions)} คะแนน")
 
     if st.button("⬅ กลับหน้าเลือกข้อสอบ"):
         st.session_state.page = "select_exam"
