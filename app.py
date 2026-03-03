@@ -13,65 +13,65 @@ import streamlit as st
 st.set_page_config(page_title="ZeeU TUTOR", layout="wide")
 
 # ------------------ CSS ------------------
-st.markdown("""
-<style>
-.hero {
-    background-image: url("https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1600");
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    padding: 150px 20px;
-    text-align: center;
-    color: white;
-}
+# st.markdown("""
+# <style>
+# .hero {
+#     background-image: url("https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1600");
+#     background-size: cover;
+#     background-position: center;
+#     position: relative;
+#     padding: 150px 20px;
+#     text-align: center;
+#     color: white;
+# }
 
-.hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-}
+# .hero::before {
+#     content: "";
+#     position: absolute;
+#     inset: 0;
+#     background: rgba(0,0,0,0.6);
+# }
 
-.hero-content {
-    position: relative;
-    z-index: 2;
-}
+# .hero-content {
+#     position: relative;
+#     z-index: 2;
+# }
 
-.hero h1 {
-    font-size: 72px;
-    font-weight: 800;
-    margin: 0;
-}
+# .hero h1 {
+#     font-size: 72px;
+#     font-weight: 800;
+#     margin: 0;
+# }
 
-.hero p {
-    font-size: 22px;
-    margin-top: 20px;
-}
+# .hero p {
+#     font-size: 22px;
+#     margin-top: 20px;
+# }
 
-.stButton>button {
-    border-radius: 12px;
-    height: 50px;
-    font-weight: 600;
-    background-color: black;
-    color: white;
-}
+# .stButton>button {
+#     border-radius: 12px;
+#     height: 50px;
+#     font-weight: 600;
+#     background-color: black;
+#     color: white;
+# }
 
-.stButton>button:hover {
-    background-color: #333;
-}
-.contact-box {
-    margin-top: 40px;
-    font-size: 18px;
-}
-.exam-box {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
-}
-</style>
-""", unsafe_allow_html=True)
+# .stButton>button:hover {
+#     background-color: #333;
+# }
+# .contact-box {
+#     margin-top: 40px;
+#     font-size: 18px;
+# }
+# .exam-box {
+#     background: white;
+#     padding: 30px;
+#     border-radius: 20px;
+#     box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+#     margin-bottom: 20px;
+# }
+# </style>
+# """, unsafe_allow_html=True)
 
 # ------------------ LOAD QUESTIONS ------------------
 def load_questions(file):
@@ -87,6 +87,143 @@ def load_questions(file):
                 })
     return questions
 
+# # ------------------ SESSION ------------------
+# if "page" not in st.session_state:
+#     st.session_state.page = "home"
+
+# # ================== HOME ==================
+# if st.session_state.page == "home":
+
+#     st.markdown("""
+#     <div class="hero">
+#         <div class="hero-content">
+#             <h1>ZeeU TUTOR</h1>
+#             <p>เตรียมสอบเข้า M1 & M4 แบบมืออาชีพ</p>
+#         </div>
+#     </div>
+#     """, unsafe_allow_html=True)
+
+#     col1, col2 = st.columns(2)
+
+#     with col1:
+#         if st.button("🚀 เริ่มทำข้อสอบ"):
+#             st.session_state.page = "select_exam"
+
+#     with col2:
+#         if st.button("📝 สมัครเรียน"):
+#             st.session_state.page = "register"
+
+#     st.markdown("""
+#     <div class="contact-box">
+#         📘 Facebook: ZeeuTUTOR <br>
+#         💬 Line: openchat ZeeuTUTOR <br>
+#         📞 Phone: 065-294-1928
+#     </div>
+#     """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+
+/* ===== ANNOUNCEMENT BAR ===== */
+.announce {
+    background: #1e40af;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    background: white;
+    padding: 18px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.nav-logo {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1e3a8a;
+}
+
+/* ===== HERO ===== */
+.hero {
+    background-image: url("https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1600");
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 160px 20px;
+    text-align: center;
+    color: white;
+    border-radius: 0 0 40px 40px;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    border-radius: 0 0 40px 40px;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 72px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.hero p {
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+/* ===== BUTTON ===== */
+.stButton>button {
+    border-radius: 14px;
+    height: 52px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: white;
+    border: none;
+    transition: 0.3s ease;
+}
+
+.stButton>button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* ===== CONTACT CARD ===== */
+.contact-box {
+    margin-top: 60px;
+    padding: 30px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    font-size: 18px;
+    text-align: center;
+}
+
+/* ===== EXAM CARD ===== */
+.exam-box {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
 # ------------------ SESSION ------------------
 if "page" not in st.session_state:
     st.session_state.page = "home"
@@ -94,33 +231,68 @@ if "page" not in st.session_state:
 # ================== HOME ==================
 if st.session_state.page == "home":
 
+    # Announcement Bar
+    st.markdown("""
+    <div class="announce">
+        🎉 เปิดรับสมัครรอบใหม่แล้ว! รับจำนวนจำกัด
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Navbar
+    nav1, nav2, nav3, nav4 = st.columns([3,1,1,1])
+
+    with nav1:
+        st.markdown("### ZeeU TUTOR")
+
+    with nav2:
+        if st.button("ทดลองทำข้อสอบ"):
+            st.session_state.page = "select_exam"
+            st.rerun()
+
+    with nav3:
+        if st.button("สมัครเรียน"):
+            st.session_state.page = "register"
+            st.rerun()
+
+    with nav4:
+        if st.button("ติดต่อ"):
+            st.session_state.page = "home"
+            st.rerun()
+
+    # Hero
     st.markdown("""
     <div class="hero">
         <div class="hero-content">
             <h1>ZeeU TUTOR</h1>
-            <p>เตรียมสอบเข้า M1 & M4 แบบมืออาชีพ</p>
+            <p>เตรียมสอบเข้า M1 & M4 แบบมืออาชีพ<br>
+            สร้างความเข้าใจระยะยาว คิดวิเคราะห์เป็นระบบ</p>
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+    st.write("")
+    st.write("")
 
     col1, col2 = st.columns(2)
 
     with col1:
         if st.button("🚀 เริ่มทำข้อสอบ"):
             st.session_state.page = "select_exam"
+            st.rerun()
 
     with col2:
-        if st.button("📝 สมัครเรียน"):
+        if st.button("📝 สมัครเรียนเลย"):
             st.session_state.page = "register"
+            st.rerun()
 
     st.markdown("""
     <div class="contact-box">
+        <b>ติดต่อเรา</b><br><br>
         📘 Facebook: ZeeuTUTOR <br>
         💬 Line: openchat ZeeuTUTOR <br>
         📞 Phone: 065-294-1928
     </div>
     """, unsafe_allow_html=True)
-
 # ================== SELECT EXAM ==================
 elif st.session_state.page == "select_exam":
 
