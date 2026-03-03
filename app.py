@@ -10,70 +10,72 @@ st.set_page_config(
 )
 
 # -----------------------
-# CUSTOM CSS (Modern)
+# CUSTOM CSS 
 # -----------------------
 st.markdown("""
 <style>
-.header {
-    background: linear-gradient(135deg, #000000, #2c2c2c);
-    padding: 100px 0;
+.hero {
+    background-image: url("https://images.pexels.com/photos/5212345/pexels-photo-5212345.jpeg?auto=compress&cs=tinysrgb&w=1600");
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 140px 20px;
     text-align: center;
     color: white;
 }
 
-.header h1 {
-    font-size: 64px;
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.55);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 72px;
     font-weight: 800;
     margin: 0;
 }
 
-.header p {
-    font-size: 20px;
-    opacity: 0.8;
+.hero p {
+    font-size: 22px;
+    margin-top: 20px;
+    opacity: 0.9;
 }
 
-.card-container {
-    display: flex;
-    justify-content: center;
-    gap: 50px;
-    margin-top: 60px;
-}
-
-.card {
+.cta-btn {
+    margin-top: 30px;
+    display: inline-block;
+    padding: 14px 35px;
     background: white;
-    padding: 40px;
-    border-radius: 20px;
-    width: 300px;
-    text-align: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    color: black;
+    font-weight: 600;
+    border-radius: 12px;
+    text-decoration: none;
     transition: 0.3s;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
-}
-
-.exam-box {
-    background: white;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    margin-bottom: 20px;
-}
-
-.stButton>button {
-    border-radius: 12px;
-    height: 50px;
-    font-weight: 600;
-    background-color: black;
-    color: white;
-}
-
-.stButton>button:hover {
-    background-color: #333;
+.cta-btn:hover {
+    transform: translateY(-3px);
+    background: #f0f0f0;
 }
 </style>
+
+<div class="hero">
+    <div class="hero-content">
+        <h1>ZeeU TUTOR</h1>
+        <p>เตรียมสอบเข้า M1 & M4 แบบมืออาชีพ</p>
+        <a class="cta-btn" href="#levels">เริ่มทำข้อสอบ</a>
+    </div>
+</div>
 """, unsafe_allow_html=True)
 
 # -----------------------
