@@ -29,7 +29,7 @@ def render_teachers():
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        t1 = get_base64(ASSETS_DIR / "teacher1.jpg")
+        t1 = get_base64(ASSETS_DIR / "hero1.jpg")
 
         st.markdown(f"""
             <img src="data:image/jpeg;base64,{t1}" 
@@ -44,7 +44,7 @@ def render_teachers():
 
 
     with col2:
-        t2 = get_base64(ASSETS_DIR / "teacher2.jpg")
+        t2 = get_base64(ASSETS_DIR / "hero2.jpg")
 
         st.markdown(f"""
             <img src="data:image/jpeg;base64,{t2}" 
