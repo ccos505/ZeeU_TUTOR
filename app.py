@@ -3,7 +3,7 @@ from PIL import Image
 import streamlit as st
 from utils.image_utils import get_base64
 from utils.question_loader import load_questions
-from utils.common import generate_password, send_email
+from utils.common import generate_password, send_email, is_valid_phone
 from styles.main_style import apply_style
 from pages.home import render_home
 
@@ -259,8 +259,25 @@ elif st.session_state.page == "register":
     phone = st.text_input("เบอร์โทรศัพท์")
 
     if st.button("ยืนยันสมัคร"):
-        send_email(name, grade, phone)
-        st.success(f"ขอบคุณคุณ {name} ทางเราจะติดต่อกลับเร็วที่สุด")
+        if not name.strip():
+            st.warning("กรุณากรอกชื่อ-นามสกุล")
+        
+        elif not grade.strip():
+            st.warning("กรุณากรอกระดับชั้น")
+
+        elif not is_valid_phone(phone):
+            st.warning("กรุณากรอกเบอร์โทรศัพท์ที่ถูกต้อง (9-10 หลัก)")
+            
+        else:
+            with st.spinner("⏳ กำลังตรวจสอบข้อมูล กรุณารอสักครู่..."):
+                success = send_email(name, grade, phone)
+
+            if success:
+                st.success(f"ขอบคุณ คุณ {name} ทางเราจะติดต่อกลับเร็วที่สุด")
+            else:
+                st.warning("⚠️ ไม่สามารถส่งข้อมูลได้ในขณะนี้ กรุณาลองใหม่อีกครั้งภายหลัง")
+
+        
 
     if st.button("⬅ กลับหน้าแรก"):
         st.session_state.page = "home"
