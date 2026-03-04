@@ -124,8 +124,6 @@ if st.session_state.page == "home":
         st.markdown('</div>', unsafe_allow_html=True)
             
     render_home()
-    st.write("")
-    render_teachers()
 
     st.write("")
     st.write("")
