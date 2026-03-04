@@ -3,7 +3,7 @@ from PIL import Image
 import streamlit as st
 from utils.image_utils import get_base64
 from utils.question_loader import load_questions
-from utils.common import generate_password, send_email, is_valid_phone
+from utils.common import generate_password, send_email, is_valid_phone, send_exam_result_email
 from styles.main_style import apply_style
 from pages.home import render_home, render_teachers
 
@@ -176,8 +176,7 @@ elif st.session_state.page == "select_exam":
     with col1:
         if st.button("🎯 ทำข้อสอบ ม.1"):
             st.session_state.level = "m1"
-            st.session_state.page = "exam"
-
+            st.session_state.page = "start_exam"
     with col2:
         if st.button("📘 ทำข้อสอบ ม.2"):
             st.warning("🚧 ระดับ ม.2 กำลังพัฒนา")
@@ -191,7 +190,7 @@ elif st.session_state.page == "select_exam":
     with col4:
         if st.button("🚀 ทำข้อสอบ ม.4"):
             st.session_state.level = "m4"
-            st.session_state.page = "exam"
+            st.session_state.page = "start_exam"
 
     with col5:
         if st.button("📙 ทำข้อสอบ ม.5"):
@@ -203,12 +202,40 @@ elif st.session_state.page == "select_exam":
 
     # ===== ปุ่มกลับ =====
     if st.button("⬅ กลับหน้าแรก"):
+        for key in ["student_name", "level"]:
+            if key in st.session_state:
+                del st.session_state[key]
         st.session_state.page = "home"
+        st.rerun()
+            
+        
+        
+elif st.session_state.page == "start_exam":
+
+    st.title("เริ่มทำข้อสอบ")
+    st.subheader(f"ระดับ {st.session_state.level.upper()}")
+
+    student_name = st.text_input("กรอกชื่อ-นามสกุล ก่อนเริ่มสอบ")
+    test_type = st.radio(
+        "เลือกประเภทการสอบ",
+        ["Pre-test", "Post-test"],
+        horizontal=True
+    )
+
+    if st.button("เริ่มทำข้อสอบ"):
+        if not student_name.strip():
+            st.warning("กรุณากรอกชื่อก่อนเริ่มสอบ")
+        else:
+            st.session_state.student_name = student_name
+            st.session_state.test_type = test_type
+            st.session_state.page = "exam"
+            st.rerun()
 
 # ================== EXAM PAGE ==================
 elif st.session_state.page == "exam":
 
     st.title(f"ข้อสอบระดับ {st.session_state.level.upper()}")
+    st.write(f"👤 ผู้สอบ: {st.session_state.student_name}")
 
     questions = load_questions(f"questions/{st.session_state.level}.json")
     score = 0
@@ -242,16 +269,49 @@ elif st.session_state.page == "exam":
         st.markdown('</div>', unsafe_allow_html=True)
     
     
-    if st.button("ส่งคำตอบ"):
-        score = 0
-        for q, ans in user_answers:
-            if ans is None or str(ans).strip() == "" or not ans:
-                continue
-            else:
-                if str(ans).strip() == str(q["answer"]).strip():
-                    score += 1
+    # if st.button("ส่งคำตอบ"):
+    #     score = 0
+    #     for q, ans in user_answers:
+    #         if ans is None or str(ans).strip() == "" or not ans:
+    #             continue
+    #         else:
+    #             if str(ans).strip() == str(q["answer"]).strip():
+    #                 score += 1
                     
+    #     st.success(f"✅ ส่งคำตอบสำเร็จ! ได้คะแนน {score} / {len(questions)}")
+    
+    if st.button("ส่งคำตอบ"):
+
+        score = 0
+        result_detail = []
+
+        for q, ans in user_answers:
+
+            correct_answer = str(q["answer"]).strip()
+            user_answer = str(ans).strip() if ans else ""
+
+            is_correct = user_answer == correct_answer
+
+            if is_correct:
+                score += 1
+
+            result_detail.append({
+                "no": q["no"],
+                # "question": q["question"],
+                "user_answer": user_answer,
+                "correct_answer": correct_answer,
+                "result": "ถูก" if is_correct else "ผิด"
+            })
+
         st.success(f"✅ ส่งคำตอบสำเร็จ! ได้คะแนน {score} / {len(questions)}")
+
+        send_exam_result_email(
+            student_name=st.session_state.student_name,
+            level=st.session_state.level,
+            test_type=st.session_state.test_type,
+            score=score,
+            total=len(questions),
+            result_detail=result_detail)
 
     if st.button("⬅ กลับหน้าเลือกข้อสอบ"):
         st.session_state.page = "select_exam"

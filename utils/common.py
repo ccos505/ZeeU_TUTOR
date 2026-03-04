@@ -2,6 +2,7 @@
 from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import streamlit as st
 
 
@@ -14,6 +15,53 @@ def generate_password():
     total = yy + mm + dd
     return str(total).zfill(4)[::-1] 
 
+
+def send_exam_result_email(student_name, level, test_type, score, total, result_detail):
+
+    sender_email = st.secrets["EMAIL_USER"]
+    sender_password = st.secrets["EMAIL_PASS"]
+    receiver_email = st.secrets["EMAIL_USER"]
+
+    subject = f"ผลสอบ {student_name} ระดับ {level.upper()} ({test_type})"
+
+    body = f"""
+        📚 ผลสอบ
+
+        ชื่อ: {student_name}
+        ระดับ: {level.upper()}
+        ประเภท: {test_type}
+        คะแนน: {score} / {total}
+
+        -------------------------
+        รายละเอียดแต่ละข้อ
+        -------------------------
+        """
+
+    for item in result_detail:
+        body += f"""
+            ข้อ {item['no']}
+            ตอบ: {item['user_answer']}
+            เฉลย: {item['correct_answer']}
+            ผลลัพธ์: {item['result']}
+            -------------------------
+            """
+
+    msg = MIMEMultipart()
+    msg["From"] = sender_email
+    msg["To"] = receiver_email
+    msg["Subject"] = subject
+    msg.attach(MIMEText(body, "plain"))
+
+    try:
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.send_message(msg)
+        server.quit()
+        return True
+    except Exception as e:
+        st.error(f"เกิดข้อผิดพลาดในการส่งอีเมล: {e}")
+        return False
 
 
 
