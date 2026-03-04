@@ -3,6 +3,7 @@ from PIL import Image
 import streamlit as st
 from utils.image_utils import get_base64
 from utils.question_loader import load_questions
+from utils.common import generate_password
 from styles.main_style import apply_style
 from pages.home import render_home
 
@@ -20,6 +21,9 @@ bg1 = get_base64("assets/hero1.jpg")
 bg2 = get_base64("assets/hero2.jpg")
 bg3 = get_base64("assets/hero3.jpg")
 bg4 = get_base64("assets/hero4.jpg")
+fb_icon = get_base64("assets/facebook.png")
+line_icon = get_base64("assets/line.png")
+phone_icon = get_base64("assets/phone.png")
 
 # Apply style
 st.markdown(apply_style(bg1,bg2,bg3,bg4), unsafe_allow_html=True)
@@ -27,6 +31,10 @@ st.markdown(apply_style(bg1,bg2,bg3,bg4), unsafe_allow_html=True)
 # Page routing
 if "page" not in st.session_state:
     st.session_state.page = "home"
+    
+    
+if "ask_password" not in st.session_state:
+    st.session_state.ask_password = False
 
 if st.session_state.page == "home":
     
@@ -46,8 +54,9 @@ if st.session_state.page == "home":
 
     with nav2:
         if st.button("ทดลองทำข้อสอบ"):
-            st.session_state.page = "select_exam"
-            st.rerun()
+            st.session_state.ask_password = True
+            # st.session_state.page = "select_exam"
+            # st.rerun()
 
     with nav3:
         if st.button("สมัครเรียน"):
@@ -77,17 +86,49 @@ if st.session_state.page == "home":
             # st.session_state.page = "free_trial"
             st.session_state.page = "home"
             st.rerun()
+                
+    if st.session_state.ask_password:
+
+        st.markdown('<div class="password-wrapper">', unsafe_allow_html=True)
+
+        st.markdown(
+            '<div class="password-title">🔐 กรุณากรอกรหัสก่อนเข้าใช้งาน</div>',
+            unsafe_allow_html=True
+        )
+
+        user_input = st.text_input(
+            "รหัสยืนยัน",
+            type="password",
+            label_visibility="collapsed"
+        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("ยืนยัน", use_container_width=True):
+                if user_input == generate_password():
+                    st.session_state.ask_password = False
+                    st.session_state.page = "select_exam"
+                    st.rerun()
+                else:
+                    st.error("❌ รหัสไม่ถูกต้อง")
+
+        with col2:
+            if st.button("ยกเลิก", use_container_width=True):
+                st.session_state.ask_password = False
+                st.rerun()
+
+        st.markdown('</div>', unsafe_allow_html=True)
+            
     render_home()
 
     st.write("")
     st.write("")
 
     col1, col2 = st.columns(2)
-    st.markdown("""
+    st.markdown(f"""
     <div class="footer">
-
     <div class="footer-content">
-
     <div class="footer-title">
     ZeeU TUTOR | ติดต่อเรา
     </div>
@@ -97,24 +138,24 @@ if st.session_state.page == "home":
     <a href="https://www.facebook.com/profile.php?id=61586686648790"
     target="_blank"
     class="footer-item">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg">
+        <img src="data:image/png;base64,{fb_icon}">
         <span>ZeeuTUTOR</span>
     </a>
 
-    <a href="https://line.me/ti/g2/Xz8aX7jDsDKEsJKESX6-cCcWg8vNKrRNnLiy-g?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"
+    <a href="https://line.me/ti/g2/Xz8aX7jDsDKEsJKESX6-cCcWg8vNKrRNnLiy-g"
     target="_blank"
     class="footer-item">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg">
+        <img src="data:image/png;base64,{line_icon}">
         <span>OpenChat</span>
     </a>
 
     <a href="tel:0652941928"
     class="footer-item">
-        📞 <span>065-294-1928</span>
+        <img src="data:image/png;base64,{phone_icon}">
+        <span>065-294-1928</span>
     </a>
 
     </div>
-
     </div>
     </div>
     """, unsafe_allow_html=True)

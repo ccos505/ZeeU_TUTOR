@@ -2,6 +2,49 @@ def apply_style(bg1, bg2, bg3, bg4):
     return f"""
     <style>
 
+/* Center the modal */
+.password-wrapper {{
+    display: flex;
+    justify-content: center;
+    margin-top: 10vh;
+}}
+
+/* Modal box */
+.password-box {{
+    background: white;
+    padding: 40px;
+    width: 400px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    animation: fadeIn 0.3s ease-in-out;
+}}
+
+/* Title */
+.password-title {{
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #1e293b;
+}}
+
+/* Buttons */
+.stButton > button {{
+    border-radius: 12px;
+    padding: 10px 0px;
+    font-weight: 500;
+    transition: 0.2s;
+}}
+
+.stButton > button:hover {{
+    transform: translateY(-2px);
+}}
+
+@keyframes fadeIn {{
+    from {{opacity:0; transform: translateY(10px);}}
+    to {{opacity:1; transform: translateY(0);}}
+}}
+
     /* ===== ANNOUNCEMENT BAR ===== */
     .announce {{
         background: #1e40af;
