@@ -4,7 +4,12 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import streamlit as st
+import json
+import os
+from datetime import datetime, timedelta
 
+SUBMIT_LOG_FILE = "submit_log.json"
+import re
 
 def generate_password():
     today = datetime.today()
@@ -21,8 +26,9 @@ def send_exam_result_email(student_name, level, test_type, score, total, result_
     sender_email = st.secrets["EMAIL_USER"]
     sender_password = st.secrets["EMAIL_PASS"]
     receiver_email = st.secrets["EMAIL_USER"]
+    date = datetime.now().strftime("%Y-%m-%d")
 
-    subject = f"ผลสอบ {student_name} ระดับ {level.upper()} ({test_type})"
+    subject = f"ผลสอบ {student_name} ระดับ {level.upper()} ({test_type}) - วันที่ {date}"
 
     body = f"""
         📚 ผลสอบ
@@ -105,7 +111,7 @@ def send_email(name, grade, phone):
                 msg.as_string()
             )
 
-        return True  # success
+        return True 
 
     except KeyError as e:
         st.error(f"❌ Missing secret key: {e}")
@@ -125,10 +131,53 @@ def send_email(name, grade, phone):
     
     
 def is_valid_phone(phone):
-    # ดึงเฉพาะตัวเลข 0-9 ออกมา
     digits_only = "".join(c for c in phone if c.isdigit())
-
-    # ตรวจสอบว่ามี 9 หรือ 10 หลัก
     if len(digits_only) in [9, 10]:
         return True
     return False
+
+
+def clean_student_name(name: str) -> str:
+    if not name:
+        return ""
+    name = name.strip()
+    name = re.sub(r"\s+", " ", name)
+    name = re.sub(r"[^a-zA-Zก-๙\s]", "", name)
+    name = name.lower()
+
+    return name
+
+
+def can_submit(student_name, level, test_type):
+
+    key = f"{student_name}_{level}_{test_type}"
+    
+    if not os.path.exists(SUBMIT_LOG_FILE):
+        return True
+
+    with open(SUBMIT_LOG_FILE, "r") as f:
+        data = json.load(f)
+
+    if key not in data:
+        return True
+
+    last_submit_time = datetime.fromisoformat(data[key])
+    if datetime.now() - last_submit_time < timedelta(hours=1):
+        return False
+
+    return True
+
+def save_submit_time(student_name, level, test_type):
+
+    key = f"{student_name}_{level}_{test_type}"
+
+    if os.path.exists(SUBMIT_LOG_FILE):
+        with open(SUBMIT_LOG_FILE, "r") as f:
+            data = json.load(f)
+    else:
+        data = {}
+
+    data[key] = datetime.now().isoformat()
+
+    with open(SUBMIT_LOG_FILE, "w") as f:
+        json.dump(data, f)

@@ -3,9 +3,10 @@ from PIL import Image
 import streamlit as st
 from utils.image_utils import get_base64
 from utils.question_loader import load_questions
-from utils.common import generate_password, send_email, is_valid_phone, send_exam_result_email
+from utils.common import generate_password, send_email, is_valid_phone, send_exam_result_email, can_submit, save_submit_time, clean_student_name
 from styles.main_style import apply_style
 from pages.home import render_home, render_teachers
+import os
 
 logo = Image.open("logo.png")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -216,6 +217,7 @@ elif st.session_state.page == "start_exam":
     st.subheader(f"ระดับ {st.session_state.level.upper()}")
 
     student_name = st.text_input("กรอกชื่อ-นามสกุล ก่อนเริ่มสอบ")
+    student_name = clean_student_name(student_name)
     test_type = st.radio(
         "เลือกประเภทการสอบ",
         ["Pre-test", "Post-test"],
@@ -223,7 +225,7 @@ elif st.session_state.page == "start_exam":
     )
 
     if st.button("เริ่มทำข้อสอบ"):
-        if not student_name.strip():
+        if not student_name:
             st.warning("กรุณากรอกชื่อก่อนเริ่มสอบ")
         else:
             st.session_state.student_name = student_name
@@ -238,6 +240,7 @@ elif st.session_state.page == "exam":
     st.write(f"👤 ผู้สอบ: {st.session_state.student_name}")
 
     questions = load_questions(f"questions/{st.session_state.level}.json")
+    len_questions = len(questions)
     score = 0
     user_answers = []
 
@@ -269,18 +272,14 @@ elif st.session_state.page == "exam":
         st.markdown('</div>', unsafe_allow_html=True)
     
     
-    # if st.button("ส่งคำตอบ"):
-    #     score = 0
-    #     for q, ans in user_answers:
-    #         if ans is None or str(ans).strip() == "" or not ans:
-    #             continue
-    #         else:
-    #             if str(ans).strip() == str(q["answer"]).strip():
-    #                 score += 1
-                    
-    #     st.success(f"✅ ส่งคำตอบสำเร็จ! ได้คะแนน {score} / {len(questions)}")
-    
     if st.button("ส่งคำตอบ"):
+        if not can_submit(
+            st.session_state.student_name,
+            st.session_state.level,
+            st.session_state.test_type
+        ):
+            st.error("⛔ คุณส่งผลสอบไปแล้ว กรุณารอ 1 ชั่วโมงก่อนส่งใหม่")
+            st.stop()
 
         score = 0
         result_detail = []
@@ -297,21 +296,28 @@ elif st.session_state.page == "exam":
 
             result_detail.append({
                 "no": q["no"],
-                # "question": q["question"],
                 "user_answer": user_answer,
                 "correct_answer": correct_answer,
                 "result": "ถูก" if is_correct else "ผิด"
             })
 
-        st.success(f"✅ ส่งคำตอบสำเร็จ! ได้คะแนน {score} / {len(questions)}")
+        st.success(f"✅ ส่งคำตอบสำเร็จ! ได้คะแนน {score} / {len_questions}")
 
-        send_exam_result_email(
-            student_name=st.session_state.student_name,
-            level=st.session_state.level,
-            test_type=st.session_state.test_type,
-            score=score,
-            total=len(questions),
-            result_detail=result_detail)
+        # send_exam_result_email(
+        #     student_name=st.session_state.student_name,
+        #     level=st.session_state.level,
+        #     test_type=st.session_state.test_type,
+        #     score=score,
+        #     total=len_questions,
+        #     result_detail=result_detail)
+        
+        save_submit_time(
+        st.session_state.student_name,
+        st.session_state.level,
+        st.session_state.test_type)
+
+        
+        st.success(f"✅ ผลสอบถูกส่งเข้าระบบแล้ว!")
 
     if st.button("⬅ กลับหน้าเลือกข้อสอบ"):
         st.session_state.page = "select_exam"
