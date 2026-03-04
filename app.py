@@ -5,7 +5,7 @@ from utils.image_utils import get_base64
 from utils.question_loader import load_questions
 from utils.common import generate_password, send_email, is_valid_phone
 from styles.main_style import apply_style
-from pages.home import render_home
+from pages.home import render_home, render_teachers
 
 logo = Image.open("logo.png")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -36,9 +36,8 @@ if "page" not in st.session_state:
 if "ask_password" not in st.session_state:
     st.session_state.ask_password = False
 
-if st.session_state.page == "home":
     
-
+if st.session_state.page == "home":
     # Announcement Bar
     st.markdown("""
     <div class="announce">
@@ -125,6 +124,8 @@ if st.session_state.page == "home":
         st.markdown('</div>', unsafe_allow_html=True)
             
     render_home()
+    st.write("")
+    render_teachers()
 
     st.write("")
     st.write("")
