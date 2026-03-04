@@ -296,3 +296,4 @@ def apply_style(bg1, bg2, bg3, bg4):
 
     </style>
     """
+

@@ -3,7 +3,7 @@ from PIL import Image
 import streamlit as st
 from utils.image_utils import get_base64
 from utils.question_loader import load_questions
-from utils.common import generate_password
+from utils.common import generate_password, send_email
 from styles.main_style import apply_style
 from pages.home import render_home
 
@@ -169,18 +169,39 @@ elif st.session_state.page == "select_exam":
 
     st.title("เลือกระดับข้อสอบ")
 
-    col1, col2 = st.columns(2)
+    # ===== สร้าง 3 คอลัมน์ =====
+    col1, col2, col3 = st.columns(3)
 
+    # ===== ROW 1 =====
     with col1:
         if st.button("🎯 ทำข้อสอบ ม.1"):
             st.session_state.level = "m1"
             st.session_state.page = "exam"
 
     with col2:
+        if st.button("📘 ทำข้อสอบ ม.2"):
+            st.warning("🚧 ระดับ ม.2 กำลังพัฒนา")
+
+    with col3:
+        if st.button("📗 ทำข้อสอบ ม.3"):
+            st.warning("🚧 ระดับ ม.3 กำลังพัฒนา")
+    # ===== ROW 2 =====
+    col4, col5, col6 = st.columns(3)
+
+    with col4:
         if st.button("🚀 ทำข้อสอบ ม.4"):
             st.session_state.level = "m4"
             st.session_state.page = "exam"
 
+    with col5:
+        if st.button("📙 ทำข้อสอบ ม.5"):
+            st.warning("🚧 ระดับ ม.5 กำลังพัฒนา")
+
+    with col6:
+        if st.button("🎓 ทำข้อสอบ ม.6"):
+            st.warning("🚧 ระดับ ม.6 กำลังพัฒนา")
+
+    # ===== ปุ่มกลับ =====
     if st.button("⬅ กลับหน้าแรก"):
         st.session_state.page = "home"
 
@@ -238,6 +259,7 @@ elif st.session_state.page == "register":
     phone = st.text_input("เบอร์โทรศัพท์")
 
     if st.button("ยืนยันสมัคร"):
+        send_email(name, grade, phone)
         st.success(f"ขอบคุณคุณ {name} ทางเราจะติดต่อกลับเร็วที่สุด")
 
     if st.button("⬅ กลับหน้าแรก"):
