@@ -12,7 +12,7 @@ def render_home():
     <div class="hero">
         <div class="hero-content">
             <h1>ZeeU TUTOR</h1>
-            <p>เตรียมสอบเข้า ม.1 & ม.4 แบบมืออาชีพ</p>
+            <p>เตรียมสอบเข้า ม.1 - ม.6 แบบมืออาชีพ</p>
         </div>
     </div>
     """, unsafe_allow_html=True)
