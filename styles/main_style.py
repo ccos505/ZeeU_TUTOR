@@ -138,7 +138,8 @@ def apply_style(bg1, bg2, bg3, bg4):
         background: #f3f6ff;
         transform: translateY(-2px);
     }}
-
+    
+    /* ===== FOOTER ===== */
     .footer {{
         position: fixed;
         bottom: 0;
@@ -146,73 +147,91 @@ def apply_style(bg1, bg2, bg3, bg4):
         width: 100%;
         background: rgba(30, 64, 175, 0.95);
         backdrop-filter: blur(8px);
-        padding: 14px 0;
+        padding: 22px 0;  
         z-index: 999;
     }}
 
     .footer-content {{
-        max-width: 1200px;
+        max-width: 1400px;
         margin: auto;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 40px;
+        padding: 0 50px;
         color: white;
     }}
 
     .footer-title {{
-        font-weight: 600;
-        font-size: 16px;
+        font-weight: 700;
+        font-size: 24px;  
         color: white;
     }}
 
     .footer-links {{
         display: flex;
-        gap: 30px;
+        gap: 40px;
     }}
 
     .footer-item {{
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 14px;
         text-decoration: none;
         color: #ffffff !important;
         font-weight: 600;
+        font-size: 18px;
         transition: 0.3s ease;
     }}
 
     .footer-item img {{
-        width: 22px;
+        width: 32px;
         filter: brightness(0) invert(1);
     }}
 
     .footer-item:hover {{
-        transform: translateY(-2px);
+        transform: translateY(-3px);
     }}
 
-    /* ===== MOBILE RESPONSIVE ===== */
+    /* ===== MOBILE ===== */
     @media (max-width: 768px) {{
+
+        .footer {{
+            padding: 1px 0;   
+        }}
 
         .footer-content {{
             flex-direction: column;
-            gap: 12px;
-            padding: 0 20px;
+            gap: 1px;
+            padding: 0 1px;
             text-align: center;
+        }}
+
+        .footer-title {{
+            font-size: 10px;  
+            font-weight: 500;
         }}
 
         .footer-links {{
             flex-direction: column;
-            gap: 10px;
+            gap: 3px;
         }}
 
         .footer-item {{
             justify-content: center;
+            font-size: 7px;   
+            gap: 3px;
+            font-weight: 300;
+        }}
+
+        .footer-item img {{
+            width: 10px;  
         }}
     }}
 
-    /* Prevent content from hiding behind footer */
+    /* Prevent content from hiding */
     .main .block-container {{
-        padding-bottom: 120px;
+        padding-bottom: 50px;
     }}
+
     </style>
     """
