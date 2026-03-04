@@ -5,7 +5,7 @@ from utils.image_utils import get_base64
 from utils.question_loader import load_questions
 from utils.common import generate_password, send_email, is_valid_phone
 from styles.main_style import apply_style
-from pages.home import render_home, render_teachers
+from pages.home import render_home
 
 logo = Image.open("logo.png")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))

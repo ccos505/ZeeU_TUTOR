@@ -5,11 +5,6 @@ from utils.image_utils import get_base64
 
 
 BASE_DIR = Path(__file__).resolve().parent
-
-# print(f"BASE_DIR: {BASE_DIR}")
-# print(f"ASSETS_DIR: {BASE_DIR.parent / 'assets'}")
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# print(f"BASE_DIR: {BASE_DIR}")
 ASSETS_DIR = BASE_DIR.parent / "assets"
 
 def render_home():
@@ -21,9 +16,9 @@ def render_home():
         </div>
     </div>
     """, unsafe_allow_html=True)
-    render_teachers()
+#     render_teachers()
     
-def render_teachers():
+# def render_teachers():
 
     st.markdown("## 👩‍🏫 คุณครูของเรา")
     st.markdown("---")
