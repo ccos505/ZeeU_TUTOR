@@ -3,7 +3,7 @@
     "no": 1,
     "question": "ผลลัพธ์ของ 140×2-(300÷10) + 0 เท่ากับข้อใด",
     "choices": ["0", "230", "250", "270"],
-    "answer": "270",
+    "answer": "250",
     "image": null
   },
   {
@@ -62,7 +62,7 @@
     "no": 8,
     "question": "จงหาผลลัพธ์จากรูป",
     "choices": ["8", "4", "2", "1"],
-    "answer": "4",
+    "answer": "1",
     "image": "images/m1/q8.png"
   },
   {
@@ -96,7 +96,7 @@
     "no": 12,
     "question": "จากรูป มุมX Y Z มีขนาดเท่าใด",
     "choices": ["48°", "52°", "66°", "68°"],
-    "answer": null,
+    "answer": "52°",
     "image": "images/m1/q12.png"
   },
 
