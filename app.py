@@ -228,23 +228,31 @@ elif st.session_state.page == "exam":
             ans = st.radio(
                 "เลือกคำตอบ",
                 q["choices"],
-                key=f"q_{q['no']}"
+                key=f"q_{q['no']}",
+                index=None
             )
-        else:
+        elif q["choices"] is None:
             ans = st.text_input(
                 "คำตอบ",
                 key=f"q_{q['no']}"
             )
+        else:
+            ans = ""
         user_answers.append((q, str(ans)))
         st.markdown('</div>', unsafe_allow_html=True)
-    score = 0
-
+    
+    
     if st.button("ส่งคำตอบ"):
+        
+        score = 0
         for q, ans in user_answers:
-            if str(ans.strip()) == str(q["answer"]):
-                score += 1
-
-        st.success(f"คุณได้ {score} / {len(questions)} คะแนน")
+            if ans is None or str(ans).strip() == "" or not ans:
+                continue
+            else:
+                if str(ans).strip() == str(q["answer"]).strip():
+                    score += 1
+                    
+        st.success(f"✅ ส่งคำตอบสำเร็จ! ได้คะแนน {score} / {len(questions)}")
 
     if st.button("⬅ กลับหน้าเลือกข้อสอบ"):
         st.session_state.page = "select_exam"
