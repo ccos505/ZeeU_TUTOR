@@ -243,7 +243,6 @@ elif st.session_state.page == "exam":
     
     
     if st.button("ส่งคำตอบ"):
-        
         score = 0
         for q, ans in user_answers:
             if ans is None or str(ans).strip() == "" or not ans:
