@@ -2,37 +2,44 @@ def apply_style(bg1, bg2, bg3, bg4):
     return f"""
     <style>
 
-/* Center the modal */
+/* ===== Fade content when popup active ===== */
+.dimmed {{
+    opacity: 0.25;
+    pointer-events: none;
+    transition: 0.3s ease;
+}}
+
+/* ===== Center wrapper ===== */
 .password-wrapper {{
     display: flex;
     justify-content: center;
-    margin-top: 10vh;
+    margin-top: 8vh;
+    transition: 0.3s ease;
 }}
 
-/* Modal box */
+/* ===== Modal Box ===== */
 .password-box {{
     background: white;
     padding: 40px;
-    width: 400px;
-    border-radius: 20px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-    animation: fadeIn 0.3s ease-in-out;
+    width: 420px;
+    border-radius: 24px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+    animation: popUp 0.25s ease-out;
 }}
 
-/* Title */
+/* ===== Title ===== */
 .password-title {{
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 20px;
     text-align: center;
-    color: #1e293b;
 }}
 
-/* Buttons */
+/* ===== Buttons ===== */
 .stButton > button {{
-    border-radius: 12px;
-    padding: 10px 0px;
+    border-radius: 14px;
     font-weight: 500;
+    padding: 10px;
     transition: 0.2s;
 }}
 
@@ -40,10 +47,21 @@ def apply_style(bg1, bg2, bg3, bg4):
     transform: translateY(-2px);
 }}
 
-@keyframes fadeIn {{
-    from {{opacity:0; transform: translateY(10px);}}
-    to {{opacity:1; transform: translateY(0);}}
+/* ===== Animation ===== */
+@keyframes popUp {{
+    from {{opacity:0; transform: scale(0.95);}}
+    to {{opacity:1; transform: scale(1);}}
 }}
+
+/* ===== Mobile Responsive ===== */
+@media (max-width: 768px) {{
+    .password-box {{
+        width: 92%;
+        padding: 28px;
+        border-radius: 18px;
+    }}
+}}
+
 
     /* ===== ANNOUNCEMENT BAR ===== */
     .announce {{

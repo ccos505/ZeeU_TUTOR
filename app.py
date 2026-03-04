@@ -88,7 +88,11 @@ if st.session_state.page == "home":
             st.rerun()
                 
     if st.session_state.ask_password:
-
+        st.markdown('<div class="dimmed">', unsafe_allow_html=True)
+        
+        
+    if st.session_state.ask_password:
+        st.markdown('</div>', unsafe_allow_html=True)
         st.markdown('<div class="password-wrapper">', unsafe_allow_html=True)
 
         st.markdown(
