@@ -16,9 +16,9 @@ def render_home():
         </div>
     </div>
     """, unsafe_allow_html=True)
-#     render_teachers()
+ 
     
-# def render_teachers():
+def render_teachers():
 
     st.markdown("## 👩‍🏫 คุณครูของเรา")
     st.markdown("---")
