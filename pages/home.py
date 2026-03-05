@@ -2,10 +2,11 @@ import streamlit as st
 from pathlib import Path
 import os
 from utils.image_utils import get_base64
-
+from streamlit_autorefresh import st_autorefresh
 
 BASE_DIR = Path(__file__).resolve().parent
 ASSETS_DIR = BASE_DIR.parent / "assets"
+
 
 def render_home():
     st.markdown("""
@@ -16,7 +17,58 @@ def render_home():
         </div>
     </div>
     """, unsafe_allow_html=True)
-    
+    render_courses()
+
+
+def render_courses():
+
+    st.markdown("## 📚 คอร์สเรียนของเรา")
+    st.markdown("---")
+
+    # ===== CSS =====
+    st.markdown("""
+    <style>
+    .course-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .course-wrapper img {
+        width: 100%;
+        height: auto;
+        border-radius: 20px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # ===== โหลดรูป =====
+    course_images = sorted([
+        f for f in os.listdir(ASSETS_DIR)
+        if f.startswith("course_") and f.endswith(".png")
+    ])
+
+    if not course_images:
+        st.warning("ไม่พบรูปคอร์สใน assets")
+        return
+
+    # ===== Auto refresh ทุก 5 วินาที =====
+    count = st_autorefresh(interval=5000, key="course_slider")
+
+    index = count % len(course_images)
+
+    image_path = ASSETS_DIR / course_images[index]
+    img_base64 = get_base64(image_path)
+
+    st.markdown(f"""
+    <div class="course-wrapper">
+        <img src="data:image/png;base64,{img_base64}">
+    </div>
+    """, unsafe_allow_html=True)
+
+
 def render_teachers():
 
     # ===== CSS STYLE =====
