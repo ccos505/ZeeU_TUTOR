@@ -21,7 +21,7 @@ def render_home():
 
 
 def render_courses():
-
+    st.markdown("---")
     st.markdown("## 📚 คอร์สเรียนของเรา")
     st.markdown("---")
 
@@ -72,6 +72,7 @@ def render_courses():
 def render_teachers():
 
     # ===== CSS STYLE =====
+    st.markdown("---")
     st.markdown("""
     <style>
     .teacher-card {
