@@ -12,7 +12,7 @@ logo = Image.open("logo.png")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 st.set_page_config(
     page_title="ZeeU TUTOR",
-    page_icon=logo,  
+    page_icon=logo,
     layout="wide"
 )
 
@@ -27,17 +27,17 @@ line_icon = get_base64("assets/line.png")
 phone_icon = get_base64("assets/phone.png")
 
 # Apply style
-st.markdown(apply_style(bg1,bg2,bg3,bg4), unsafe_allow_html=True)
+st.markdown(apply_style(bg1, bg2, bg3, bg4), unsafe_allow_html=True)
 
 # Page routing
 if "page" not in st.session_state:
     st.session_state.page = "home"
-    
-    
+
+
 if "ask_password" not in st.session_state:
     st.session_state.ask_password = False
 
-    
+
 if st.session_state.page == "home":
     # Announcement Bar
     st.markdown("""
@@ -47,7 +47,8 @@ if st.session_state.page == "home":
     """, unsafe_allow_html=True)
 
     # Navbar
-    nav1, nav2, nav3, nav4, nav5, nav6, nav7 = st.columns([3,1,1,1,1,1,1])
+    nav1, nav2, nav3, nav4, nav5, nav6, nav7 = st.columns(
+        [3, 1, 1, 1, 1, 1, 1])
 
     with nav1:
         st.markdown("### ZeeU TUTOR")
@@ -86,11 +87,10 @@ if st.session_state.page == "home":
             # st.session_state.page = "free_trial"
             st.session_state.page = "home"
             st.rerun()
-                
+
     if st.session_state.ask_password:
         st.markdown('<div class="dimmed">', unsafe_allow_html=True)
-        
-        
+
     if st.session_state.ask_password:
         st.markdown('</div>', unsafe_allow_html=True)
         st.markdown('<div class="password-wrapper">', unsafe_allow_html=True)
@@ -123,7 +123,7 @@ if st.session_state.page == "home":
                 st.rerun()
 
         st.markdown('</div>', unsafe_allow_html=True)
-            
+
     render_home()
 
     st.write("")
@@ -208,9 +208,8 @@ elif st.session_state.page == "select_exam":
                 del st.session_state[key]
         st.session_state.page = "home"
         st.rerun()
-            
-        
-        
+
+
 elif st.session_state.page == "start_exam":
 
     st.title("เริ่มทำข้อสอบ")
@@ -253,7 +252,7 @@ elif st.session_state.page == "exam":
             image_path = os.path.join(BASE_DIR, q["image"])
             if os.path.exists(image_path):
                 st.image(image_path, width=300)
-                
+
         if q["choices"]:
             ans = st.radio(
                 "เลือกคำตอบ",
@@ -270,8 +269,7 @@ elif st.session_state.page == "exam":
             ans = ""
         user_answers.append((q, str(ans)))
         st.markdown('</div>', unsafe_allow_html=True)
-    
-    
+
     if st.button("ส่งคำตอบ"):
         if not can_submit(
             st.session_state.student_name,
@@ -298,6 +296,7 @@ elif st.session_state.page == "exam":
                 "no": q["no"],
                 "user_answer": user_answer,
                 "correct_answer": correct_answer,
+                "topic": q.get("topic", "N/A"),
                 "result": "ถูก" if is_correct else "ผิด"
             })
 
@@ -310,13 +309,12 @@ elif st.session_state.page == "exam":
             score=score,
             total=len_questions,
             result_detail=result_detail)
-        
-        save_submit_time(
-        st.session_state.student_name,
-        st.session_state.level,
-        st.session_state.test_type)
 
-        
+        save_submit_time(
+            st.session_state.student_name,
+            st.session_state.level,
+            st.session_state.test_type)
+
         st.success(f"✅ ผลสอบถูกส่งเข้าระบบแล้ว!")
 
     if st.button("⬅ กลับหน้าเลือกข้อสอบ"):
@@ -334,13 +332,13 @@ elif st.session_state.page == "register":
     if st.button("ยืนยันสมัคร"):
         if not name.strip():
             st.warning("กรุณากรอกชื่อ-นามสกุล")
-        
+
         elif not grade.strip():
             st.warning("กรุณากรอกระดับชั้น")
 
         elif not is_valid_phone(phone):
             st.warning("กรุณากรอกเบอร์โทรศัพท์ที่ถูกต้อง (9-10 หลัก)")
-            
+
         else:
             with st.spinner("⏳ กำลังตรวจสอบข้อมูล กรุณารอสักครู่..."):
                 success = send_email(name, grade, phone)
@@ -348,9 +346,8 @@ elif st.session_state.page == "register":
             if success:
                 st.success(f"ขอบคุณ คุณ {name} ทางเราจะติดต่อกลับเร็วที่สุด")
             else:
-                st.warning("⚠️ ไม่สามารถส่งข้อมูลได้ในขณะนี้ กรุณาลองใหม่อีกครั้งภายหลัง")
-
-        
+                st.warning(
+                    "⚠️ ไม่สามารถส่งข้อมูลได้ในขณะนี้ กรุณาลองใหม่อีกครั้งภายหลัง")
 
     if st.button("⬅ กลับหน้าแรก"):
         st.session_state.page = "home"

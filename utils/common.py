@@ -1,4 +1,8 @@
 
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from email import encoders
+from email.mime.base import MIMEBase
 from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
@@ -6,19 +10,248 @@ from email.mime.multipart import MIMEMultipart
 import streamlit as st
 import json
 import os
+import numpy as np
 from datetime import datetime, timedelta
-
-SUBMIT_LOG_FILE = "submit_log.json"
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.platypus import BaseDocTemplate, Frame, PageTemplate
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.units import cm
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from datetime import datetime
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 import re
+from reportlab.platypus import Image
+import matplotlib.font_manager as fm
+from reportlab.lib.colors import Color
+
+
+from reportlab.lib.colors import Color
+from reportlab.lib.pagesizes import A4
+
+
+from reportlab.lib.colors import Color
+from reportlab.lib.pagesizes import A4
+
+
+def add_watermark(canvas, doc):
+    canvas.saveState()
+    width, height = A4
+    canvas.setFillColor(Color(0.9, 0.9, 0.9))
+    canvas.setFont("Helvetica-Bold", 12)
+
+    xs = [width*0.15, width*0.5, width*0.85]
+    ys = [height*0.15, height*0.5]
+
+    for x in xs:
+        for y in ys:
+            canvas.saveState()
+            canvas.translate(x, y)
+            canvas.rotate(30)
+            canvas.drawCentredString(0, 0, "ZeeUTUTOR")
+            canvas.restoreState()
+
+    canvas.setFont("Helvetica-Bold", 18)
+    canvas.drawCentredString(width/2, 50, "ZeeUTUTOR")
+    canvas.setFont("Helvetica", 12)
+    canvas.drawCentredString(width/2, 35, "Math Diagnostic Report")
+
+    canvas.restoreState()
+
+
+chart_path = "topic_chart.png"
+SUBMIT_LOG_FILE = "submit_log.json"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def create_topic_chart(topic_stats):
+
+    font_path = "fonts/NotoSansThai_Condensed-Black.ttf"
+    font_prop = fm.FontProperties(fname=font_path)
+
+    topics = list(topic_stats.keys())
+
+    scores = [topic_stats[t]["correct"] for t in topics]
+    totals = [topic_stats[t]["total"] for t in topics]
+
+    # เปลี่ยนเป็น percent
+    percents = [(s/t)*100 for s, t in zip(scores, totals)]
+
+    N = len(topics)
+
+    angles = np.linspace(0, 2*np.pi, N, endpoint=False).tolist()
+
+    # ปิดวง
+    percents += percents[:1]
+    angles += angles[:1]
+
+    fig, ax = plt.subplots(subplot_kw=dict(polar=True))
+
+    ax.plot(angles, percents, linewidth=2)
+    ax.fill(angles, percents, alpha=0.25)
+
+    ax.set_ylim(0, 100)
+
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(topics, fontproperties=font_prop)
+    chart_path = "topic_chart.png"
+
+    plt.savefig(chart_path, bbox_inches="tight")
+    plt.close()
+
+    return chart_path
+
+
+def summarize_by_topic(result_detail):
+
+    topic_stats = defaultdict(lambda: {"correct": 0, "total": 0})
+
+    for item in result_detail:
+        topic = item["topic"]
+
+        topic_stats[topic]["total"] += 1
+
+        if item["result"] == "ถูก":
+            topic_stats[topic]["correct"] += 1
+
+    return topic_stats
+
+
+def generate_exam_pdf(student_name, level, test_type, score, total, result_detail):
+
+    file_path = f"exam_result_{student_name}.pdf"
+
+    # register font
+    pdfmetrics.registerFont(
+        TTFont(
+            "ThaiFont", f"{BASE_DIR}/fonts/NotoSansThai_Condensed-Black.ttf")
+    )
+
+    # styles
+    title_style = ParagraphStyle(
+        "Title",
+        fontName="ThaiFont",
+        fontSize=24,
+        alignment=1
+    )
+
+    sub_title_style = ParagraphStyle(
+        "SubTitle",
+        fontName="ThaiFont",
+        fontSize=18,
+        alignment=1)
+
+    normal_style = ParagraphStyle(
+        "Normal",
+        fontName="ThaiFont",
+        fontSize=12
+    )
+
+    title = Paragraph(
+        "รายงานผลการสอบ",
+        title_style
+    )
+
+    info = Paragraph(
+        f"""
+        <b>ชื่อผู้สอบ:</b> {student_name}<br/>
+        <b>ระดับ:</b> {level.upper()}<br/>
+        <b>ประเภทการสอบ:</b> {test_type}<br/>
+        <b>คะแนน:</b> {score} / {total}
+        """,
+        normal_style
+    )
+
+    data = [["หัวข้อ", "ทำถูก", "จำนวนข้อ", "เปอร์เซ็นต์"]]
+    topic_stats = summarize_by_topic(result_detail)
+    for topic, stat in topic_stats.items():
+
+        correct = stat["correct"]
+        total = stat["total"]
+
+        percent = round(correct/total*100)
+
+        data.append([
+            topic,
+            correct,
+            total,
+            f"{percent}%"
+        ])
+
+    table = Table(data, colWidths=[5*cm, 3*cm, 3*cm, 3*cm])
+
+    table.setStyle(TableStyle([
+        ("FONTNAME", (0, 0), (-1, -1), "ThaiFont"),
+
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1F4E79")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+
+        ("GRID", (0, 0), (-1, -1), 1, colors.grey),
+
+        ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+
+        ("BACKGROUND", (0, 1), (-1, -1), colors.whitesmoke)
+    ]))
+
+    sub_title_charts = Paragraph(
+        "วิเคราะห์คะแนนแต่ละหัวข้อ",
+        sub_title_style
+    )
+
+    chart_path = create_topic_chart(topic_stats)
+    chart = Image(chart_path, width=400, height=250)
+
+    space = Spacer(1, 20)
+    elements = [
+        space,
+        title,
+        space, space,
+        info,
+        space, space,
+        table,
+        space, space,
+        sub_title_charts,
+        space, space,
+        chart
+    ]
+
+    frame = Frame(
+        40,
+        40,
+        A4[0] - 80,
+        A4[1] - 80,
+        id="normal"
+    )
+
+    pdf = BaseDocTemplate(
+        file_path,
+        pagesize=A4
+    )
+
+    template = PageTemplate(
+        id="test",
+        frames=frame,
+        onPageEnd=add_watermark
+    )
+
+    pdf.addPageTemplates([template])
+
+    pdf.build(elements)
+
+    return file_path
+
 
 def generate_password():
     today = datetime.today()
     yy = today.year % 100
     mm = today.month
     dd = today.day
-    
+
     total = yy + mm + dd
-    return str(total).zfill(4)[::-1] 
+    return str(total).zfill(4)[::-1]
 
 
 def send_exam_result_email(student_name, level, test_type, score, total, result_detail):
@@ -27,48 +260,68 @@ def send_exam_result_email(student_name, level, test_type, score, total, result_
     sender_password = st.secrets["EMAIL_PASS"]
     receiver_email = st.secrets["EMAIL_USER"]
     date = datetime.now().strftime("%Y-%m-%d")
+    pdf_path = generate_exam_pdf(
+        student_name,
+        level,
+        test_type,
+        score,
+        total,
+        result_detail
+    )
 
-    subject = f"ผลสอบ {student_name} ระดับ {level.upper()} ({test_type}) - วันที่ {date}"
+    subject = f"ผลสอบ {student_name} ระดับ {level.upper()} ({test_type}) - {date}"
 
     body = f"""
-        📚 ผลสอบ
+    รายงานผลการสอบ
 
-        ชื่อ: {student_name}
-        ระดับ: {level.upper()}
-        ประเภท: {test_type}
-        คะแนน: {score} / {total}
+    ชื่อผู้สอบ: {student_name}
+    ระดับ: {level.upper()}
+    ประเภทการสอบ: {test_type}
+    คะแนน: {score} / {total}
 
-        -------------------------
-        รายละเอียดแต่ละข้อ
-        -------------------------
-        """
-
-    for item in result_detail:
-        body += f"""
-            ข้อ {item['no']}
-            ตอบ: {item['user_answer']}
-            เฉลย: {item['correct_answer']}
-            ผลลัพธ์: {item['result']}
-            -------------------------
-            """
+    ไฟล์รายละเอียดผลสอบแนบมาใน PDF
+    """
 
     msg = MIMEMultipart()
     msg["From"] = sender_email
     msg["To"] = receiver_email
     msg["Subject"] = subject
+
     msg.attach(MIMEText(body, "plain"))
+
+    #
+    with open(pdf_path, "rb") as f:
+        part = MIMEBase("application", "pdf")
+        part.set_payload(f.read())
+
+    encoders.encode_base64(part)
+
+    part.add_header(
+        "Content-Disposition",
+        f'attachment; filename="{pdf_path}"'
+    )
+
+    msg.attach(part)
 
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
         server.login(sender_email, sender_password)
+
         server.send_message(msg)
         server.quit()
+
         return True
+
     except Exception as e:
         st.error(f"เกิดข้อผิดพลาดในการส่งอีเมล: {e}")
         return False
 
+    finally:
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
+        if os.path.exists(chart_path):
+            os.remove(chart_path)
 
 
 def send_email(name, grade, phone):
@@ -111,7 +364,7 @@ def send_email(name, grade, phone):
                 msg.as_string()
             )
 
-        return True 
+        return True
 
     except KeyError as e:
         st.error(f"❌ Missing secret key: {e}")
@@ -128,8 +381,8 @@ def send_email(name, grade, phone):
     except Exception as e:
         st.error(f"❌ Unexpected Error: {e}")
         return False
-    
-    
+
+
 def is_valid_phone(phone):
     digits_only = "".join(c for c in phone if c.isdigit())
     if len(digits_only) in [9, 10]:
@@ -151,7 +404,7 @@ def clean_student_name(name: str) -> str:
 def can_submit(student_name, level, test_type):
 
     key = f"{student_name}_{level}_{test_type}"
-    
+
     if not os.path.exists(SUBMIT_LOG_FILE):
         return True
 
@@ -166,6 +419,7 @@ def can_submit(student_name, level, test_type):
         return False
 
     return True
+
 
 def save_submit_time(student_name, level, test_type):
 
