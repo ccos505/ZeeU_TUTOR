@@ -123,7 +123,7 @@ def summarize_by_topic(result_detail):
 
 def generate_exam_pdf(student_name, level, test_type, score, total, result_detail):
 
-    file_path = f"exam_result_{student_name}.pdf"
+    file_path = f"exam_result_{test_type}.pdf"
 
     # register font
     pdfmetrics.registerFont(
