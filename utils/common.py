@@ -128,8 +128,41 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
     # register font
     pdfmetrics.registerFont(
         TTFont(
-            "ThaiFont", f"{BASE_DIR}/fonts/NotoSansThai_Condensed-Black.ttf")
+            "ThaiFont", f"{BASE_DIR}/fonts/NotoSansThai_Condensed-Medium.ttf")
     )
+
+    pdfmetrics.registerFont(
+        TTFont("ThaiRegular",
+               f"{BASE_DIR}/fonts/NotoSansThai_Condensed-Regular.ttf")
+    )
+
+    pdfmetrics.registerFont(
+        TTFont("ThaiThin", f"{BASE_DIR}/fonts/NotoSansThai_Condensed-Thin.ttf")
+    )
+
+    label_style = ParagraphStyle(
+        "Label",
+        fontName="ThaiRegular",
+        fontSize=12
+    )
+
+    value_style = ParagraphStyle(
+        "Value",
+        fontName="ThaiThin",
+        fontSize=12
+    )
+
+    data_info = [
+        [Paragraph("ชื่อผู้สอบ", label_style),
+         Paragraph(student_name, value_style)],
+        [Paragraph("ระดับ", label_style), Paragraph(
+            level.upper(), value_style)],
+        [Paragraph("ประเภทการสอบ", label_style),
+         Paragraph(test_type, value_style)],
+        [Paragraph("คะแนน", label_style), Paragraph(
+            f"{score} / {total}", value_style)]
+    ]
+    info_table = Table(data_info, colWidths=[120, 300])
 
     # styles
     title_style = ParagraphStyle(
@@ -145,25 +178,9 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
         fontSize=18,
         alignment=1)
 
-    normal_style = ParagraphStyle(
-        "Normal",
-        fontName="ThaiFont",
-        fontSize=12
-    )
-
     title = Paragraph(
         "รายงานผลการสอบ",
         title_style
-    )
-
-    info = Paragraph(
-        f"""
-        <b>ชื่อผู้สอบ:</b> {student_name}<br/>
-        <b>ระดับ:</b> {level.upper()}<br/>
-        <b>ประเภทการสอบ:</b> {test_type}<br/>
-        <b>คะแนน:</b> {score} / {total}
-        """,
-        normal_style
     )
 
     data = [["หัวข้อ", "ทำถูก", "จำนวนข้อ", "เปอร์เซ็นต์"]]
@@ -210,7 +227,7 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
         space,
         title,
         space, space,
-        info,
+        info_table,
         space, space,
         table,
         space, space,
