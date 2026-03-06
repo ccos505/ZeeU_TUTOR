@@ -32,9 +32,9 @@ def add_watermark(canvas, doc):
     canvas.saveState()
     width, height = A4
     canvas.setFillColor(Color(0.9, 0.9, 0.9))
-    canvas.setFont("Helvetica-Bold", 12)
+    canvas.setFont("Helvetica-Bold", 10)
 
-    xs = [width*0.15, width*0.5, width*0.85]
+    xs = [width*0.02, width*0.5, width*0.98]
     ys = [height*0.15, height*0.5]
 
     for x in xs:
@@ -306,7 +306,8 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
     template = PageTemplate(
         id="test",
         frames=frame,
-        onPageEnd=add_watermark
+        # onPageEnd=add_watermark
+        onPage=add_watermark
     )
 
     pdf.addPageTemplates([template])
