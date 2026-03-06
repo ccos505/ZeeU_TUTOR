@@ -1,4 +1,5 @@
 
+from zoneinfo import ZoneInfo
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from email import encoders
@@ -245,13 +246,15 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
 
 
 def generate_password():
-    today = datetime.today()
+    today = datetime.now(ZoneInfo("Asia/Bangkok"))
+
     yy = today.year % 100
     mm = today.month
     dd = today.day
 
-    total = yy + mm + dd
-    return str(total).zfill(4)[::-1]
+    total = (yy + mm + dd)
+    password = str(total).zfill(4)[::-1] + str(dd).zfill(2)
+    return password
 
 
 def send_exam_result_email(student_name, level, test_type, score, total, result_detail):
