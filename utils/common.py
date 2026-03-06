@@ -261,7 +261,7 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
     )
 
     chart_path = create_topic_chart(topic_stats)
-    chart = Image(chart_path, width=400, height=250)
+    chart = Image(chart_path, width=360, height=225)
     suggestions = generate_suggestion(topic_stats)
 
     # elements.append(Spacer(1, 20))
@@ -279,7 +279,7 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
         info_table,
         space,
         table,
-        space, space,
+        space,
         sub_title_charts,
         space, space,
         chart,
