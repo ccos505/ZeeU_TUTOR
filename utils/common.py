@@ -226,9 +226,9 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
     elements = [
         space,
         title,
-        space,
-        info_table,
         space, space,
+        info_table,
+        space,
         table,
         space, space,
         sub_title_charts,
