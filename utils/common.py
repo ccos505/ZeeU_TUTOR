@@ -1,10 +1,10 @@
 
+import random
 from zoneinfo import ZoneInfo
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from email import encoders
 from email.mime.base import MIMEBase
-from datetime import datetime
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -21,21 +21,11 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import cm
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
-from datetime import datetime
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
 import re
 from reportlab.platypus import Image
 import matplotlib.font_manager as fm
 from reportlab.lib.colors import Color
-
-
-from reportlab.lib.colors import Color
-from reportlab.lib.pagesizes import A4
-
-
-from reportlab.lib.colors import Color
-from reportlab.lib.pagesizes import A4
 
 
 def add_watermark(canvas, doc):
@@ -66,6 +56,52 @@ def add_watermark(canvas, doc):
 chart_path = "topic_chart.png"
 SUBMIT_LOG_FILE = "submit_log.json"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def generate_suggestion(topic_stats):
+
+    good_suggestions = [
+        "ทำได้ดี ควรรักษาระดับและลองทำโจทย์ที่ยากขึ้น",
+        "มีความเข้าใจดี ลองฝึกโจทย์ประยุกต์เพิ่มเติม",
+        "พื้นฐานแข็งแรง ควรลองโจทย์ที่ท้าทายขึ้น",
+        "ทำได้ดีมาก ควรฝึกโจทย์หลากหลายรูปแบบ",
+        "มีความเข้าใจดี ลองทำข้อสอบแข่งขันหรือโจทย์ยากขึ้น"
+    ]
+
+    mid_suggestions = [
+        "ควรฝึกทำโจทย์เพิ่มเติมเพื่อเพิ่มความแม่นยำ",
+        "ควรทบทวนแนวคิดหลักและฝึกโจทย์ประยุกต์",
+        "ยังสามารถพัฒนาได้ ลองฝึกโจทย์หลากหลายรูปแบบ",
+        "ควรฝึกทำแบบฝึกหัดเพิ่มเติมเพื่อให้เข้าใจมากขึ้น",
+        "ลองทบทวนบทเรียนและทำโจทย์เพิ่มเพื่อเพิ่มความมั่นใจ"
+    ]
+
+    low_suggestions = [
+        "ควรทบทวนพื้นฐานของหัวข้อนี้ก่อน",
+        "ควรกลับไปฝึกโจทย์พื้นฐานเพิ่มเติม",
+        "แนะนำให้ทบทวนแนวคิดหลักของบทเรียน",
+        "ควรเริ่มจากแบบฝึกหัดระดับง่ายก่อน",
+        "ควรฝึกทำโจทย์พื้นฐานเพื่อสร้างความเข้าใจ"
+    ]
+
+    suggestions = []
+
+    for topic, data in topic_stats.items():
+
+        p = data["percent"]
+
+        if p >= 80:
+            suggestion = random.choice(good_suggestions)
+
+        elif p >= 50:
+            suggestion = random.choice(mid_suggestions)
+
+        else:
+            suggestion = random.choice(low_suggestions)
+
+        suggestions.append(f"หัวข้อ {topic} {suggestion}")
+
+    return suggestions
 
 
 def create_topic_chart(topic_stats):
@@ -117,6 +153,11 @@ def summarize_by_topic(result_detail):
 
         if item["result"] == "ถูก":
             topic_stats[topic]["correct"] += 1
+
+    for topic in topic_stats:
+        c = topic_stats[topic]["correct"]
+        t = topic_stats[topic]["total"]
+        topic_stats[topic]["percent"] = round((c/t)*100)
 
     return topic_stats
 
@@ -221,6 +262,14 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
 
     chart_path = create_topic_chart(topic_stats)
     chart = Image(chart_path, width=400, height=250)
+    suggestions = generate_suggestion(topic_stats)
+
+    elements.append(Spacer(1, 20))
+    advice = Paragraph("คำแนะนำการพัฒนา", sub_title_style)
+
+    suggest = []
+    for s in suggestions:
+        suggest.append(Paragraph(f"• {s}", value_style))
 
     space = Spacer(1, 20)
     elements = [
@@ -233,7 +282,12 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
         space, space,
         sub_title_charts,
         space, space,
-        chart
+        chart,
+        space,
+        advice,
+        space,
+        *suggest
+
     ]
 
     frame = Frame(
