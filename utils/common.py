@@ -264,8 +264,8 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
     chart = Image(chart_path, width=400, height=250)
     suggestions = generate_suggestion(topic_stats)
 
-    elements.append(Spacer(1, 20))
-    advice = Paragraph("คำแนะนำการพัฒนา", sub_title_style)
+    # elements.append(Spacer(1, 20))
+    advice = Paragraph("คำแนะนำ", sub_title_style)
 
     suggest = []
     for s in suggestions:
