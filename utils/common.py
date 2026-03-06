@@ -162,7 +162,7 @@ def generate_exam_pdf(student_name, level, test_type, score, total, result_detai
         [Paragraph("คะแนน", label_style), Paragraph(
             f"{score} / {total}", value_style)]
     ]
-    info_table = Table(data_info, colWidths=[120, 300])
+    info_table = Table(data_info, colWidths=[90, 300])
 
     # styles
     title_style = ParagraphStyle(
